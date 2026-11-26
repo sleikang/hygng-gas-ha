@@ -1,0 +1,136 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Huizhou Guangneng Gas",
+        "description": "Paste the session cookie captured from the WeChat portal.\n\n{cookie_help}",
+        "data": {
+          "cookie": "Session cookie"
+        },
+        "data_description": {
+          "cookie": "Either the full Cookie header or just the ASP.NET_SessionId value."
+        }
+      },
+      "account": {
+        "title": "Select account",
+        "description": "This cookie is bound to several accounts. Pick the one to add.",
+        "data": {
+          "customer_id": "Customer ID"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Huizhou Guangneng Gas",
+        "description": "The session expired. Capture a fresh cookie.\n\n{cookie_help}",
+        "data": {
+          "cookie": "Session cookie"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The cookie is invalid or expired. Capture a new one from WeChat.",
+      "cannot_connect": "Cannot reach www.hygng.com. Check the network and try again.",
+      "no_accounts": "No account is bound to this cookie.",
+      "unknown": "Unexpected error, check the log."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "Re-authentication successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Huizhou Guangneng Gas options",
+        "description": "Replace the cookie when the session expires, or change the polling interval.\n\n{cookie_help}",
+        "data": {
+          "cookie": "Session cookie",
+          "scan_interval": "Polling interval (hours)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The cookie is invalid or expired.",
+      "cannot_connect": "Cannot reach www.hygng.com.",
+      "no_accounts": "No account is bound to this cookie.",
+      "unknown": "Unexpected error, check the log."
+    }
+  },
+  "services": {
+    "get_accounts": {
+      "name": "List accounts",
+      "description": "Read every customer account bound to the cookie (bill query home page).",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to query every entry."
+        }
+      }
+    },
+    "get_bills": {
+      "name": "List bills",
+      "description": "Read the recent monthly gas bills (usually 12 months).",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to query every entry."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Default 12, maximum 36."
+        }
+      }
+    },
+    "get_bill_detail": {
+      "name": "Get bill detail",
+      "description": "Read meter readings, unit price, penalty, ladder fee and total due for a month.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to query every entry."
+        },
+        "month": {
+          "name": "Billing month",
+          "description": "YYYY-MM, defaults to the latest bill."
+        }
+      }
+    },
+    "get_usage": {
+      "name": "Get usage summary",
+      "description": "Read the usage summary and 6-month daily average chart for a month.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to query every entry."
+        },
+        "month": {
+          "name": "Billing month",
+          "description": "YYYY-MM, defaults to the latest bill."
+        }
+      }
+    },
+    "get_ladder_detail": {
+      "name": "Get ladder detail",
+      "description": "Read the tariff tiers and the tier the year-to-date volume falls into.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to query every entry."
+        },
+        "month": {
+          "name": "Billing month",
+          "description": "YYYY-MM, defaults to the latest bill."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Refresh now",
+      "description": "Re-read every page (same as pressing the refresh button on the device).",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry",
+          "description": "Leave empty to refresh every entry."
+        }
+      }
+    }
+  }
+}

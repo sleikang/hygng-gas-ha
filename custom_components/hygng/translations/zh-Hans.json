@@ -1,0 +1,136 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "惠州光能燃气",
+        "description": "填写抓包得到的会话 Cookie。\n\n{cookie_help}",
+        "data": {
+          "cookie": "Cookie 会话密钥"
+        },
+        "data_description": {
+          "cookie": "整条 Cookie 或只填 ASP.NET_SessionId 的值均可，插件会自动补齐前缀。"
+        }
+      },
+      "account": {
+        "title": "选择户号",
+        "description": "该 Cookie 下绑定了多个户号，请选择要接入的一个。",
+        "data": {
+          "customer_id": "户号"
+        }
+      },
+      "reauth_confirm": {
+        "title": "重新授权惠州光能燃气",
+        "description": "会话已失效，请重新抓包填写新的 Cookie。\n\n{cookie_help}",
+        "data": {
+          "cookie": "Cookie 会话密钥"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Cookie 无效或已过期，请在微信里重新打开账单页面抓包。",
+      "cannot_connect": "无法连接 www.hygng.com，请检查网络或稍后重试。",
+      "no_accounts": "该 Cookie 下没有查询到户号。",
+      "unknown": "未知错误，请查看日志。"
+    },
+    "abort": {
+      "already_configured": "该户号已经配置过了。",
+      "reauth_successful": "重新授权成功。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "惠州光能燃气设置",
+        "description": "会话失效时可在这里换 Cookie；也可调整轮询间隔。\n\n{cookie_help}",
+        "data": {
+          "cookie": "Cookie 会话密钥",
+          "scan_interval": "轮询间隔（小时）"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Cookie 无效或已过期。",
+      "cannot_connect": "无法连接 www.hygng.com。",
+      "no_accounts": "该 Cookie 下没有查询到户号。",
+      "unknown": "未知错误，请查看日志。"
+    }
+  },
+  "services": {
+    "get_accounts": {
+      "name": "查询户号",
+      "description": "读取该 Cookie 下绑定的全部户号（对应小程序账单查询首页）。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则查询全部配置项。"
+        }
+      }
+    },
+    "get_bills": {
+      "name": "查询账单列表",
+      "description": "读取最近的气费账单列表（通常 12 个月）。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则查询全部配置项。"
+        },
+        "limit": {
+          "name": "返回条数",
+          "description": "默认 12，最多 36 条。"
+        }
+      }
+    },
+    "get_bill_detail": {
+      "name": "查询账单明细",
+      "description": "读取指定账期的抄表度数、单价、违约金、超档气费与合计应缴。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则查询全部配置项。"
+        },
+        "month": {
+          "name": "账期",
+          "description": "格式 YYYY-MM，留空取最近一期。"
+        }
+      }
+    },
+    "get_usage": {
+      "name": "查询用气管理",
+      "description": "读取指定账期的用气汇总与近 6 个月日均用气量。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则查询全部配置项。"
+        },
+        "month": {
+          "name": "账期",
+          "description": "格式 YYYY-MM，留空取最近一期。"
+        }
+      }
+    },
+    "get_ladder_detail": {
+      "name": "查询阶梯用气明细",
+      "description": "读取阶梯档位、单价说明，并给出本年度累计用气量所处的档位。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则查询全部配置项。"
+        },
+        "month": {
+          "name": "账期",
+          "description": "格式 YYYY-MM，留空取最近一期。"
+        }
+      }
+    },
+    "refresh": {
+      "name": "立即刷新",
+      "description": "重新抓取全部页面（等价于按下设备上的「刷新账单」按钮）。",
+      "fields": {
+        "entry_id": {
+          "name": "配置项",
+          "description": "留空则刷新全部配置项。"
+        }
+      }
+    }
+  }
+}

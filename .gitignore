@@ -1,0 +1,16 @@
+# Home Assistant 运行时
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 开发用：抓包导出与临时文件
+_har_raw/
+*.har
+.venv/
+venv/
+*.log
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store

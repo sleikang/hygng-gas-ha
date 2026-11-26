@@ -1,0 +1,12 @@
+{
+  "domain": "hygng",
+  "name": "惠州光能燃气",
+  "codeowners": ["@sleikang"],
+  "config_flow": true,
+  "documentation": "https://github.com/sleikang/hygng-gas-ha",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/sleikang/hygng-gas-ha/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
