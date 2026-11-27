@@ -146,7 +146,6 @@ def main() -> None:
 
     if bills:
         latest = bills[0]
-        q = {k: latest.get(k, "") for k in BILL_ARGS}
         params = {
             "FMeterNumber": latest["meter_number"],
             "FReadDatePer": latest["read_date_prev"],

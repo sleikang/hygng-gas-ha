@@ -12,7 +12,7 @@
 | 小程序页面 | 抓包接口 | 集成实现 |
 | --- | --- | --- |
 | 账单查询首页（用户名 / 用气地址 / 切换户号） | `GET /WXInquireFee/index1` | 设备信息 + `hygng.get_accounts` 服务 |
-| 账单列表（近 12 个月） | `POST /WXInquireFee/InquireFeeRecord1` | 19 个传感器 + `hygng.get_bills` 服务 |
+| 账单列表（近 12 个月） | `POST /WXInquireFee/InquireFeeRecord1` | 19 个当月传感器 + 「历史账单」传感器（属性带全部 12 期明细）+ `hygng.get_bills` 服务 |
 | 账单明细（抄表方式/度数、单价、违约金、容量气价、超档气费、合计应缴） | `GET /WXGasFeeOpen/Index1` | 明细类传感器 + `hygng.get_bill_detail` 服务 |
 | 用气管理（本期汇总 + 近 6 个月日均用气柱状图） | `GET /WXInquireFee/FeeManage` | 日均用气量传感器（带图表属性）+ `hygng.get_usage` 服务 |
 | 阶梯用气明细（三档气量与单价说明） | `GET /WXGasFeeOpen/ladderDetail` | 当前阶梯传感器（带档位表）+ `hygng.get_ladder_detail` 服务 |
@@ -105,8 +105,54 @@
 | 年度累计气费 | 本年度累计气费（元） |
 | 当前阶梯 | 第一档 / 第二档 / 第三档，按年度累计用气量推算 |
 | 最近账期 | 例如 2026-10 |
+| 历史账单 | 一个传感器装下全部 12 期：state 是期数，属性 `bills` 是每期的完整明细 |
 | 欠费 | 二元传感器，最新账单未缴清时为开 |
 | 刷新账单 | 按钮，强制重抓全部页面 |
+
+## 历史账单怎么用
+
+所有账期都塞在「历史账单」这一个传感器里，不会一个月冒一个实体出来。
+
+- `state`：当前拿到的期数（通常是 12）。
+- 属性 `bills`：12 期账单的数组，每期字段固定，顺序为最新 → 最旧：
+
+| 字段 | 含义 |
+| --- | --- |
+| `fee_month` / `read_id` | 账期（YYYY-MM）/ 门户内部账单 ID |
+| `period_start` / `period_end` | 计费周期起止 |
+| `amount` / `sum_amount` | 本月气费 / 门户给出的合计应缴 |
+| `usage` / `daily_average` / `qty_day` | 用气量 / 日均 / 用气天数 |
+| `price` | 单价（元/m³） |
+| `before_qty` / `current_qty` | 上次表底 / 本次表底 |
+| `penalty` / `ladder_amount` | 违约金 / 超档气费 |
+| `year_amount` | 年度累计气费 |
+| `read_type` / `status` / `is_paid` | 抄表方式 / 缴费状态原文 / 是否已缴清 |
+| `title` | 账单标题，如「2026年10月份气费账单」 |
+
+- 另有汇总属性：`count`、`newest_month`、`oldest_month`、`total_amount`、`total_usage`、`unpaid_months`、`updated_at`。
+
+做一张整年账单表（Markdown 卡片直接循环属性）：
+
+```yaml
+type: markdown
+content: |
+  | 账期 | 用气量 | 金额 | 状态 |
+  | --- | --- | --- | --- |
+  {% for b in state_attr('sensor.ranqi_li_shi_zhang_dan', 'bills') %}
+  | {{ b.fee_month }} | {{ b.usage }} m³ | {{ b.amount }} 元 | {{ b.status }} |
+  {% endfor %}
+```
+
+只想要某一期的**明细页原文**（含上次抄表方式、前期未缴气费、本月容量气价这些只有明细页才有的字段），用服务指定账期：
+
+```yaml
+action: hygng.get_bill_detail
+data:
+  month: "2026-08"
+response_variable: bill
+```
+
+- 门户只给 12 期，过期账期会自动从 `bills` 里滚出去；需要长期留存请用 InfluxDB / 长期统计自行归档。
 
 ## 服务
 

@@ -279,7 +279,8 @@ async def async_setup_entry(
     """Set up the sensors of one account."""
     coordinator = entry.runtime_data.coordinator
     async_add_entities(
-        HygngSensor(coordinator, description) for description in SENSORS
+        [HygngSensor(coordinator, description) for description in SENSORS]
+        + [HygngBillHistorySensor(coordinator)]
     )
 
 
@@ -311,3 +312,45 @@ class HygngSensor(CoordinatorEntityBase, SensorEntity):
         if self.coordinator.data is None or self.entity_description.attr_fn is None:
             return None
         return self.entity_description.attr_fn(self.coordinator.data)
+
+
+class HygngBillHistorySensor(CoordinatorEntityBase, SensorEntity):
+    """All bills in one entity: state is the count, ``bills`` holds the detail."""
+
+    _attr_has_entity_name = True
+    _attr_name = "历史账单"
+    _attr_icon = "mdi:history"
+    _attr_native_unit_of_measurement = "期"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator: HygngCoordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.customer_id}_bill_history"
+
+    @property
+    def native_value(self) -> StateType:
+        """How many months the portal currently returns."""
+        data = self.coordinator.data
+        return len(data.bills) if data else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Complete 12-month bill list plus a few roll-ups."""
+        data = self.coordinator.data
+        if data is None or not data.bills:
+            return None
+        bills = [
+            {**bill.as_dict(), "is_paid": bill.is_paid} for bill in data.bills
+        ]
+        amounts = [b["amount"] for b in bills if b["amount"] is not None]
+        usages = [b["usage"] for b in bills if b["usage"] is not None]
+        return {
+            "bills": bills,
+            "count": len(bills),
+            "newest_month": bills[0]["fee_month"],
+            "oldest_month": bills[-1]["fee_month"],
+            "total_amount": round(sum(amounts), 2) if amounts else None,
+            "total_usage": round(sum(usages), 3) if usages else None,
+            "unpaid_months": [b["fee_month"] for b in bills if not b["is_paid"]],
+            "updated_at": data.updated_at.isoformat() if data.updated_at else None,
+        }
